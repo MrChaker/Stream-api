@@ -6,6 +6,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const axios_1 = __importDefault(require("axios"));
 const cors_1 = __importDefault(require("cors"));
+const crypto_1 = __importDefault(require("crypto"));
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 const app = (0, express_1.default)();
 const square_1 = require("square");
 const client = new square_1.Client({
@@ -15,7 +18,7 @@ const client = new square_1.Client({
 const port = process.env.PORT || 4000;
 console.log(port);
 app.listen(port, () => {
-    console.log(process.env.PORT);
+    console.log("listening at : " + port);
 });
 app.use((0, cors_1.default)({
     origin: "*",
@@ -72,4 +75,23 @@ app.get("/get-order", (req, res) => {
         console.log(error);
     });
 });
-app.post("/webhook", (req, res) => { });
+const SIGNATURE_KEY = process.env.SQUARE_SIGNATURE || "";
+function isFromSquare(signature) {
+    const hmac = crypto_1.default.createHmac("sha256", SIGNATURE_KEY);
+    hmac.update(process.env.URL + "/webhook");
+    const hash = hmac.digest("base64");
+    console.log(hash);
+    return hash === signature;
+}
+app.post("/webhook", (req, res) => {
+    const signature = req.headers["x-square-hmacsha256-signature"];
+    if (signature) {
+        // Signature is valid. Return 200 OK.
+        res.status(200).send(req.body);
+    }
+    else {
+        // Signature is invalid. Return 403 Forbidden.
+        res.status(400).send("err");
+    }
+    res.end();
+});

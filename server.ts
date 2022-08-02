@@ -1,6 +1,10 @@
 import express from "express";
 import axios from "axios";
 import cors from "cors";
+import crypto from "crypto";
+import dotenv from "dotenv";
+dotenv.config();
+
 const app = express();
 import { Client, Environment, ApiError } from "square";
 
@@ -12,7 +16,7 @@ const client = new Client({
 const port = process.env.PORT || 4000;
 console.log(port);
 app.listen(port, () => {
-    console.log(process.env.PORT);
+    console.log("listening at : " + port);
 });
 
 app.use(
@@ -63,6 +67,7 @@ var config = {
     },
     data: data,
 };
+
 app.get("/", (req, res) => {
     res.send("ooof");
 });
@@ -76,4 +81,24 @@ app.get("/get-order", (req, res) => {
         });
 });
 
-app.post("/webhook", (req, res) => {});
+const SIGNATURE_KEY = process.env.SQUARE_SIGNATURE || "";
+
+function isFromSquare(signature: any) {
+    const hmac = crypto.createHmac("sha256", SIGNATURE_KEY);
+    hmac.update(process.env.URL + "/webhook");
+    const hash = hmac.digest("base64");
+    console.log(hash);
+    return hash === signature;
+}
+
+app.post("/webhook", (req, res) => {
+    const signature = req.headers["x-square-hmacsha256-signature"];
+    if (signature) {
+        // Signature is valid. Return 200 OK.
+        res.status(200).send(req.body);
+    } else {
+        // Signature is invalid. Return 403 Forbidden.
+        res.status(400).send("err");
+    }
+    res.end();
+});
