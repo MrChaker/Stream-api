@@ -1,24 +1,23 @@
-import express from "express";
-import axios from "axios";
-import cors from "cors";
-const app = express();
-import { Client, Environment, ApiError } from "square";
-
-const client = new Client({
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const axios_1 = __importDefault(require("axios"));
+const cors_1 = __importDefault(require("cors"));
+const app = (0, express_1.default)();
+const square_1 = require("square");
+const client = new square_1.Client({
     accessToken: process.env.SQUARE_ACCESS_TOKEN,
-    environment: Environment.Sandbox,
+    environment: square_1.Environment.Sandbox,
 });
-
 app.listen(4000);
-
-app.use(
-    cors({
-        origin: "*",
-    })
-);
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
+app.use((0, cors_1.default)({
+    origin: "*",
+}));
+app.use(express_1.default.json());
+app.use(express_1.default.urlencoded({ extended: true }));
 var data = JSON.stringify({
     idempotency_key: "uuid",
     order: {
@@ -47,27 +46,23 @@ var data = JSON.stringify({
         ],
     },
 });
-
 var config = {
     method: "post",
     url: "https://connect.squareupsandbox.com/v2/orders",
     headers: {
         Host: "connect.squareupsandbox.com",
-        Authorization:
-            "Bearer EAAAEEV5v78_Lck8rB_9hH5sYJNUWjH4qDEN80869Yu5XQWhYcKQ0PLZz8Agqpqz",
+        Authorization: "Bearer EAAAEEV5v78_Lck8rB_9hH5sYJNUWjH4qDEN80869Yu5XQWhYcKQ0PLZz8Agqpqz",
         "Content-Type": "application/json",
     },
     data: data,
 };
-
 app.get("/get-order", (req, res) => {
-    axios(config)
+    (0, axios_1.default)(config)
         .then(function (response) {
-            res.send(response.data);
-        })
+        res.send(response.data);
+    })
         .catch(function (error) {
-            console.log(error);
-        });
+        console.log(error);
+    });
 });
-
-app.post("/webhook", (req, res) => {});
+app.post("/webhook", (req, res) => { });
