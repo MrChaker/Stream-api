@@ -9,7 +9,11 @@ const client = new Client({
     environment: Environment.Sandbox,
 });
 
-app.listen(4000);
+const port = process.env.PORT || 4000;
+console.log(port);
+app.listen(port, () => {
+    console.log(process.env.PORT);
+});
 
 app.use(
     cors({
@@ -59,7 +63,9 @@ var config = {
     },
     data: data,
 };
-
+app.get("/", (req, res) => {
+    res.send("ooof");
+});
 app.get("/get-order", (req, res) => {
     axios(config)
         .then(function (response) {

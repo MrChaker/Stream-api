@@ -12,7 +12,11 @@ const client = new square_1.Client({
     accessToken: process.env.SQUARE_ACCESS_TOKEN,
     environment: square_1.Environment.Sandbox,
 });
-app.listen(4000);
+const port = process.env.PORT || 4000;
+console.log(port);
+app.listen(port, () => {
+    console.log(process.env.PORT);
+});
 app.use((0, cors_1.default)({
     origin: "*",
 }));
@@ -56,6 +60,9 @@ var config = {
     },
     data: data,
 };
+app.get("/", (req, res) => {
+    res.send("ooof");
+});
 app.get("/get-order", (req, res) => {
     (0, axios_1.default)(config)
         .then(function (response) {
