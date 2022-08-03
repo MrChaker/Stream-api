@@ -28,37 +28,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 var data = JSON.stringify({
-    idempotency_key: "uuid",
-    order: {
-        location_id: "LS8Y646CN0Z0N",
-        customer_id: "129",
-        line_items: [
-            {
-                quantity: "3",
-                name: "Burger",
-                note: "without cheese",
-                uid: "19",
-                base_price_money: {
-                    amount: 20,
-                    currency: "USD",
-                },
-            },
-            {
-                quantity: "1",
-                name: "Colla",
-                uid: "20",
-                base_price_money: {
-                    amount: 90,
-                    currency: "USD",
-                },
-            },
-        ],
-    },
+    location_ids: ["LS8Y646CN0Z0N"],
 });
 
 var config = {
     method: "post",
-    url: "https://connect.squareupsandbox.com/v2/orders",
+    url: "https://connect.squareupsandbox.com/v2/orders/search",
     headers: {
         Host: "connect.squareupsandbox.com",
         Authorization:
@@ -74,13 +49,13 @@ app.get("/", (req, res) => {
 app.get("/get-order", (req, res) => {
     axios(config)
         .then(function (response) {
+            console.log(response.data);
             res.send(response.data);
         })
         .catch(function (error) {
             console.log(error);
         });
 });
-
 const SIGNATURE_KEY = process.env.SQUARE_SIGNATURE || "";
 
 function isFromSquare(signature: any) {
@@ -95,7 +70,17 @@ app.post("/webhook", (req, res) => {
     const signature = req.headers["x-square-hmacsha256-signature"];
     if (signature) {
         // Signature is valid. Return 200 OK.
-        res.status(200).send(req.body);
+        axios(config)
+            .then(function (response) {
+                response.data.orders.forEach((order: any) => {
+                    console.log("searched:" + order.id);
+                });
+                console.log(req.body.data.object.order_created.order_id);
+                /* res.send(response.data); */
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     } else {
         // Signature is invalid. Return 403 Forbidden.
         res.status(400).send("err");
