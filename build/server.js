@@ -7,17 +7,14 @@ const express_1 = __importDefault(require("express"));
 const axios_1 = __importDefault(require("axios"));
 const cors_1 = __importDefault(require("cors"));
 const crypto_1 = __importDefault(require("crypto"));
+const http_1 = require("http");
+const socket_io_1 = require("socket.io");
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
-const square_1 = require("square");
-const client = new square_1.Client({
-    accessToken: process.env.SQUARE_ACCESS_TOKEN,
-    environment: square_1.Environment.Sandbox,
-});
+const httpServer = (0, http_1.createServer)(app);
 const port = process.env.PORT || 4000;
-console.log(port);
-app.listen(port, () => {
+httpServer.listen(port, () => {
     console.log("listening at : " + port);
 });
 app.use((0, cors_1.default)({
@@ -25,6 +22,18 @@ app.use((0, cors_1.default)({
 }));
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
+//Socket IO
+app.get("/", (req, res) => {
+    res.send("ooof");
+});
+/* Socket io */
+const io = new socket_io_1.Server(httpServer, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"],
+    },
+});
+io.on("connection", (socket) => console.log("connected to" + socket.id));
 var data = JSON.stringify({
     location_ids: ["LS8Y646CN0Z0N"],
 });
@@ -38,9 +47,6 @@ var config = {
     },
     data: data,
 };
-app.get("/", (req, res) => {
-    res.send("ooof");
-});
 app.get("/get-order", (req, res) => {
     (0, axios_1.default)(config)
         .then(function (response) {
@@ -68,7 +74,6 @@ app.post("/webhook", (req, res) => {
             response.data.orders.forEach((order) => {
                 console.log("searched:" + order.id);
             });
-            console.log(req.body.data.object.order_created.order_id);
             /* res.send(response.data); */
         })
             .catch(function (error) {

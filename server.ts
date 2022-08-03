@@ -2,20 +2,16 @@ import express from "express";
 import axios from "axios";
 import cors from "cors";
 import crypto from "crypto";
+import { createServer } from "http";
+import { Server, Socket } from "socket.io";
 import dotenv from "dotenv";
 dotenv.config();
 
 const app = express();
-import { Client, Environment, ApiError } from "square";
-
-const client = new Client({
-    accessToken: process.env.SQUARE_ACCESS_TOKEN,
-    environment: Environment.Sandbox,
-});
+const httpServer = createServer(app);
 
 const port = process.env.PORT || 4000;
-console.log(port);
-app.listen(port, () => {
+httpServer.listen(port, () => {
     console.log("listening at : " + port);
 });
 
@@ -26,6 +22,23 @@ app.use(
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+//Socket IO
+
+app.get("/", (req, res) => {
+    res.send("ooof");
+});
+
+/* Socket io */
+const io = new Server(httpServer, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"],
+    },
+});
+io.on("connection", (socket: Socket) =>
+    console.log("connected to" + socket.id)
+);
 
 var data = JSON.stringify({
     location_ids: ["LS8Y646CN0Z0N"],
@@ -42,10 +55,6 @@ var config = {
     },
     data: data,
 };
-
-app.get("/", (req, res) => {
-    res.send("ooof");
-});
 app.get("/get-order", (req, res) => {
     axios(config)
         .then(function (response) {
@@ -75,7 +84,6 @@ app.post("/webhook", (req, res) => {
                 response.data.orders.forEach((order: any) => {
                     console.log("searched:" + order.id);
                 });
-                console.log(req.body.data.object.order_created.order_id);
                 /* res.send(response.data); */
             })
             .catch(function (error) {
