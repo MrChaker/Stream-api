@@ -4,13 +4,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const axios_1 = __importDefault(require("axios"));
-const cors_1 = __importDefault(require("cors"));
-const crypto_1 = __importDefault(require("crypto"));
-const http_1 = require("http");
-const socket_io_1 = require("socket.io");
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
+const cors_1 = __importDefault(require("cors"));
+const http_1 = require("http");
+const socket_io_1 = require("socket.io");
+const inetegrationController_1 = __importDefault(require("./controllers/inetegrationController"));
 const app = (0, express_1.default)();
 const httpServer = (0, http_1.createServer)(app);
 const port = process.env.PORT || 4000;
@@ -33,56 +32,10 @@ const io = new socket_io_1.Server(httpServer, {
         methods: ["GET", "POST"],
     },
 });
-io.on("connection", (socket) => console.log("connected to" + socket.id));
-var data = JSON.stringify({
-    location_ids: ["LS8Y646CN0Z0N"],
-});
-var config = {
-    method: "post",
-    url: "https://connect.squareupsandbox.com/v2/orders/search",
-    headers: {
-        Host: "connect.squareupsandbox.com",
-        Authorization: "Bearer EAAAEEV5v78_Lck8rB_9hH5sYJNUWjH4qDEN80869Yu5XQWhYcKQ0PLZz8Agqpqz",
-        "Content-Type": "application/json",
-    },
-    data: data,
-};
-app.get("/get-order", (req, res) => {
-    (0, axios_1.default)(config)
-        .then(function (response) {
-        console.log(response.data);
-        res.send(response.data);
-    })
-        .catch(function (error) {
-        console.log(error);
+let connectedSocket = null;
+io.on("connection", (socket) => {
+    socket.on("integration", ({ integration, clientSocket }) => {
+        console.log("connected to" + clientSocket);
+        (0, inetegrationController_1.default)(app, clientSocket, integration, io);
     });
-});
-const SIGNATURE_KEY = process.env.SQUARE_SIGNATURE || "";
-function isFromSquare(signature) {
-    const hmac = crypto_1.default.createHmac("sha256", SIGNATURE_KEY);
-    hmac.update(process.env.URL + "/webhook");
-    const hash = hmac.digest("base64");
-    console.log(hash);
-    return hash === signature;
-}
-app.post("/webhook", (req, res) => {
-    const signature = req.headers["x-square-hmacsha256-signature"];
-    if (signature) {
-        // Signature is valid. Return 200 OK.
-        (0, axios_1.default)(config)
-            .then(function (response) {
-            response.data.orders.forEach((order) => {
-                console.log("searched:" + order.id);
-            });
-            /* res.send(response.data); */
-        })
-            .catch(function (error) {
-            console.log(error);
-        });
-    }
-    else {
-        // Signature is invalid. Return 403 Forbidden.
-        res.status(400).send("err");
-    }
-    res.end();
 });

@@ -1,0 +1,22 @@
+[
+    {
+        "name": "Square",
+        "baseURL": "https://connect.squareupsandbox.com/v2",
+        "access_token": "Bearer EAAAED7YnT2JC7LLGZgft8gd78R_vduHb1aF7cXZoeTZoyCvd9taB-BQEZciNZhl",
+        "more_header_info": {
+            "Square-Version": "2022-07-20"
+        },
+        "search_info": {
+            "endPoint": "/orders/search",
+            "body": {
+                "location_ids": ["LZREHWNCXYBYG"]
+            }
+        }
+    },
+    {
+        "name": "NCR Integration",
+        "baseURL": "https://connect.squareupsandbox.com/v2",
+        "access_token": "Bearer EAAAED7YnT2JC7LLGZgft8gd78R_vduHb1aF7cXZoeTZoyCvd9taB-BQEZciNZhl",
+        "more_info": {}
+    }
+]
