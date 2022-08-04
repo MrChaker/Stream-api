@@ -21,8 +21,7 @@ class SquareAdaptee {
     getItems(body) {
         return __awaiter(this, void 0, void 0, function* () {
             const headers = {
-                Host: "connect.squareupsandbox.com",
-                Authorization: "Bearer EAAAEEV5v78_Lck8rB_9hH5sYJNUWjH4qDEN80869Yu5XQWhYcKQ0PLZz8Agqpqz",
+                Authorization: this.integrationData.access_token,
                 "Content-Type": "application/json",
             };
             let items = [];
@@ -41,10 +40,10 @@ class SquareAdaptee {
             }).catch(function (error) {
                 console.log("error");
             });
-            if (response.data) {
+            if (response) {
                 response.data.order.line_items.forEach((item) => {
                     items.push({
-                        name: item.item_type,
+                        name: item.name,
                         price: item.total_money.amount,
                         quantity: item.quantity,
                     });

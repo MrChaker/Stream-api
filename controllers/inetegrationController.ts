@@ -19,7 +19,7 @@ export const integrationRouter = (
         if (integration) {
             integration.webhook(io, socketID, req);
         }
-        res.end();
+        res.status(200).send("webook recieved");
     });
 };
 

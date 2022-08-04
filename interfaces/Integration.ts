@@ -26,6 +26,7 @@ export class Integration implements IntegrationInterface {
         // we need to handle the webhook for diffrent integrations
         const adapter = new Adapter(this.name);
         adapter.chosenAdapter?.getItems(req.body).then((items: ItemType[]) => {
+            console.log(socketID);
             console.log(items);
             io.to(socketID).emit("new order", items);
         });

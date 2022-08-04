@@ -1,8 +1,8 @@
 [
     {
         "name": "Square",
-        "baseURL": "https://connect.squareupsandbox.com/v2",
-        "access_token": "Bearer EAAAED7YnT2JC7LLGZgft8gd78R_vduHb1aF7cXZoeTZoyCvd9taB-BQEZciNZhl",
+        "baseURL": "https://connect.squareup.com/v2",
+        "access_token": "Bearer EAAAEfGb7hq8DKIoGp5i2hT5-LeRo0QzfpwHI6aqSN6Z2qqmGWxq7-JxQfoSB8eQ",
         "more_header_info": {
             "Square-Version": "2022-07-20"
         },

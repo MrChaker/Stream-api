@@ -13,7 +13,7 @@ const integrationRouter = (app, socketID, integrationName, io) => {
         if (integration) {
             integration.webhook(io, socketID, req);
         }
-        res.end();
+        res.status(200).send("webook recieved");
     });
 };
 exports.integrationRouter = integrationRouter;
