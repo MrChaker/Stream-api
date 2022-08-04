@@ -5,6 +5,7 @@ import cors from "cors";
 import { createServer } from "http";
 import { Server, Socket } from "socket.io";
 import integrationRouter from "./controllers/inetegrationController";
+import { Integration } from "./interfaces/Integration";
 
 const app = express();
 const httpServer = createServer(app);
@@ -36,10 +37,24 @@ const io = new Server(httpServer, {
     },
 });
 
-let connectedSocket: Socket | null = null;
+let connectedSocket = "";
+let integration: Integration | null = null;
+
 io.on("connection", (socket) => {
-    socket.on("integration", ({ integration, clientSocket }) => {
+    socket.on("integration", ({ integration: intName, clientSocket }) => {
         console.log("connected to" + clientSocket);
-        integrationRouter(app, clientSocket, integration, io);
+        connectedSocket = clientSocket;
+        integration = new Integration(intName);
     });
 });
+
+app.use(
+    "/",
+    (req, res, next) => {
+        req.integration = integration;
+        req.io = io;
+        req.socketId = connectedSocket;
+        next();
+    },
+    integrationRouter
+);

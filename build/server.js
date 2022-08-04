@@ -10,6 +10,7 @@ const cors_1 = __importDefault(require("cors"));
 const http_1 = require("http");
 const socket_io_1 = require("socket.io");
 const inetegrationController_1 = __importDefault(require("./controllers/inetegrationController"));
+const Integration_1 = require("./interfaces/Integration");
 const app = (0, express_1.default)();
 const httpServer = (0, http_1.createServer)(app);
 const port = process.env.PORT || 4000;
@@ -32,10 +33,18 @@ const io = new socket_io_1.Server(httpServer, {
         methods: ["GET", "POST"],
     },
 });
-let connectedSocket = null;
+let connectedSocket = "";
+let integration = null;
 io.on("connection", (socket) => {
-    socket.on("integration", ({ integration, clientSocket }) => {
+    socket.on("integration", ({ integration: intName, clientSocket }) => {
         console.log("connected to" + clientSocket);
-        (0, inetegrationController_1.default)(app, clientSocket, integration, io);
+        connectedSocket = clientSocket;
+        integration = new Integration_1.Integration(intName);
     });
 });
+app.use("/", (req, res, next) => {
+    req.integration = integration;
+    req.io = io;
+    req.socketId = connectedSocket;
+    next();
+}, inetegrationController_1.default);
