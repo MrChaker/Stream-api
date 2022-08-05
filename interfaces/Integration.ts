@@ -1,7 +1,7 @@
 import { Request } from "express";
 import { Server, Socket } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
-import { ItemType } from "../types";
+import { OrderType } from "../types";
 import { Adapter } from "./Adapter";
 
 export interface IntegrationInterface {
@@ -25,10 +25,10 @@ export class Integration implements IntegrationInterface {
     ) {
         // we need to handle the webhook for diffrent integrations
         const adapter = new Adapter(this.name);
-        adapter.chosenAdapter?.getItems(req.body).then((items: ItemType[]) => {
+        adapter.chosenAdapter?.getItems(req.body).then((Order: OrderType) => {
             console.log(socketID);
-            console.log(items);
-            io.to(socketID).emit("new order", items);
+            console.log(Order);
+            io.to(socketID).emit("new order", Order);
         });
     }
 }

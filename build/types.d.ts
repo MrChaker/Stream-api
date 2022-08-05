@@ -1,3 +1,9 @@
+export declare type OrderType = {
+    items: ItemType[];
+    taxPrice: number;
+    itemsPrice: number;
+    finalPrice: number;
+} | null;
 export declare type ItemType = {
     name: string;
     price: number;

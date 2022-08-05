@@ -1,3 +1,10 @@
+export type OrderType = {
+    items: ItemType[];
+    taxPrice: number;
+    itemsPrice: number;
+    finalPrice: number;
+} | null;
+
 export type ItemType = {
     name: string;
     price: number;

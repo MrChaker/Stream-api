@@ -1,4 +1,4 @@
-import { IntegrationDataType, ItemType } from "../types";
+import { IntegrationDataType, OrderType } from "../types";
 export declare class Adapter {
     chosenAdapter: IntegrationAdaptee | null;
     constructor(name: string);
@@ -6,5 +6,5 @@ export declare class Adapter {
 }
 export interface IntegrationAdaptee {
     integrationData: IntegrationDataType;
-    getItems(body: any): Promise<ItemType[]>;
+    getItems(body: any): Promise<OrderType>;
 }

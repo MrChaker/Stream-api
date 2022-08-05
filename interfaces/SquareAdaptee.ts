@@ -1,5 +1,5 @@
 import axios from "axios";
-import { IntegrationDataType, ItemType } from "../types";
+import { IntegrationDataType, ItemType, OrderType } from "../types";
 import { IntegrationAdaptee } from "./Adapter";
 
 export class SquareAdaptee implements IntegrationAdaptee {
@@ -9,7 +9,7 @@ export class SquareAdaptee implements IntegrationAdaptee {
         this.integrationData = data;
     }
 
-    public async getItems(body: any): Promise<ItemType[]> {
+    public async getItems(body: any): Promise<OrderType> {
         const headers = {
             Authorization: this.integrationData.access_token,
             "Content-Type": "application/json",
@@ -43,9 +43,14 @@ export class SquareAdaptee implements IntegrationAdaptee {
                     quantity: item.quantity,
                 });
             });
-            return items;
+            return {
+                items,
+                taxPrice: response.data.order.total_tax_money.amount,
+                itemsPrice: response.data.order.total_money.amount,
+                finalPrice: response.data.order.total_money.amount,
+            };
         } else {
-            return [];
+            return null;
         }
         /* res.send(response.data);  */
     }

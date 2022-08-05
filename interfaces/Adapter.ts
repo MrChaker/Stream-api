@@ -1,4 +1,4 @@
-import { IntegrationDataType, ItemType } from "../types";
+import { IntegrationDataType, OrderType } from "../types";
 import { SquareAdaptee } from "./SquareAdaptee";
 import data from "./IntegrationData.json";
 
@@ -26,5 +26,5 @@ export class Adapter {
 
 export interface IntegrationAdaptee {
     integrationData: IntegrationDataType;
-    getItems(body: any): Promise<ItemType[]>;
+    getItems(body: any): Promise<OrderType>;
 }

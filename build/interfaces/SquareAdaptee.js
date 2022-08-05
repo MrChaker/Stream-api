@@ -48,10 +48,15 @@ class SquareAdaptee {
                         quantity: item.quantity,
                     });
                 });
-                return items;
+                return {
+                    items,
+                    taxPrice: response.data.order.total_tax_money.amount,
+                    itemsPrice: response.data.order.total_money.amount,
+                    finalPrice: response.data.order.total_money.amount,
+                };
             }
             else {
-                return [];
+                return null;
             }
             /* res.send(response.data);  */
         });

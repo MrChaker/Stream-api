@@ -10,10 +10,10 @@ class Integration {
         var _a;
         // we need to handle the webhook for diffrent integrations
         const adapter = new Adapter_1.Adapter(this.name);
-        (_a = adapter.chosenAdapter) === null || _a === void 0 ? void 0 : _a.getItems(req.body).then((items) => {
+        (_a = adapter.chosenAdapter) === null || _a === void 0 ? void 0 : _a.getItems(req.body).then((Order) => {
             console.log(socketID);
-            console.log(items);
-            io.to(socketID).emit("new order", items);
+            console.log(Order);
+            io.to(socketID).emit("new order", Order);
         });
     }
 }
