@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const integrationRouter = express_1.default.Router();
 integrationRouter.post("/webhook", (req, res) => {
+    console.log(req.body);
     res.status(200).send("webook recieved");
     if (req.integration) {
         req.integration.webhook(req.io, req.socketId, req);
