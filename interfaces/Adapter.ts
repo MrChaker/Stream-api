@@ -1,14 +1,15 @@
 import { IntegrationDataType, OrderType } from "../types";
 import { SquareAdaptee } from "./SquareAdaptee";
 import data from "./IntegrationData.json";
+import { CloverAdaptee } from "./CloverAdaptee";
 
 export class Adapter {
     chosenAdapter: IntegrationAdaptee | null = null;
     constructor(name: string) {
         const data = this.getIntegrationData(name);
         switch (name) {
-            case "Square": {
-                this.chosenAdapter = new SquareAdaptee(data);
+            case "Clover": {
+                this.chosenAdapter = new CloverAdaptee(data);
             }
         }
     }
@@ -18,7 +19,7 @@ export class Adapter {
         return {
             baseURL: int?.baseURL!,
             access_token: int?.access_token!,
-            more_header_info: int?.more_header_info,
+            more_info: int?.more_info,
             search_info: int?.search_info,
         };
     }

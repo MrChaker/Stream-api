@@ -2,7 +2,7 @@ import axios from "axios";
 import { IntegrationDataType, ItemType, OrderType } from "../types";
 import { IntegrationAdaptee } from "./Adapter";
 
-export class SquareAdaptee implements IntegrationAdaptee {
+export class CloverAdaptee implements IntegrationAdaptee {
     integrationData: IntegrationDataType;
 
     constructor(data: IntegrationDataType) {
@@ -16,18 +16,22 @@ export class SquareAdaptee implements IntegrationAdaptee {
         };
 
         let items: ItemType[] = [];
-        let orderID = "";
 
-        switch (body.type) {
-            case "order.created":
+        let orderID =
+            body.merchants[
+                this.integrationData.more_info.merchantID
+            ][0].objectId.slice(2);
+
+        /* switch (body.merchants[this.integrationData.more_info.merchantID].type) {
+            case "CREATE":
                 orderID = body.data.object.order_created.order_id;
                 break;
-            case "order.updated": {
+            case "UPDATE": {
                 orderID = body.data.object.order_updated.order_id;
             }
-        }
+        } */
         const response: any = await axios(
-            `${this.integrationData.baseURL}/orders/${orderID}`,
+            `${this.integrationData.baseURL}/${this.integrationData.more_info.merchantID}/orders/${orderID}?expand=lineItems`,
             {
                 method: "get",
                 headers,
@@ -36,20 +40,18 @@ export class SquareAdaptee implements IntegrationAdaptee {
             console.log("error");
         });
         if (response) {
-            response.data.order.line_items.forEach((item: any) => {
+            response.data.lineItems.elements.forEach((el: any) => {
                 items.push({
-                    name: item.name,
-                    price: item.total_money.amount,
-                    quantity: item.quantity,
+                    name: el.name,
+                    price: el.price,
+                    quantity: el.unitQty / 1000,
                 });
             });
             return {
                 items,
-                taxPrice: response.data.order.total_tax_money.amount,
-                itemsPrice:
-                    response.data.order.total_money.amount -
-                    response.data.order.total_tax_money.amount,
-                finalPrice: response.data.order.total_money.amount,
+                finalPrice: response.data.total,
+                taxPrice: 0,
+                itemsPrice: response.data.total - response.data.taxRemoved,
             };
         } else {
             return null;

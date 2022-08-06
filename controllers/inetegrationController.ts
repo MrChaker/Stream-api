@@ -1,4 +1,3 @@
-import crypto from "crypto";
 import express from "express";
 
 const integrationRouter = express.Router();
@@ -6,9 +5,7 @@ const integrationRouter = express.Router();
 integrationRouter.post("/webhook", (req, res) => {
     console.log(req.body);
     res.status(200).send("webook recieved");
-    if (req.integration) {
-        req.integration.webhook(req.io, req.socketId, req);
-    }
+    if (req.integration) req.integration.webhook(req.io, req.socketId, req);
 });
 
 export default integrationRouter;

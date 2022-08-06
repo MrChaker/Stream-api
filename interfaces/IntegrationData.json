@@ -4,7 +4,7 @@
       "name": "Square",
       "baseURL": "https://connect.squareup.com/v2",
       "access_token": "Bearer EAAAEfGb7hq8DKIoGp5i2hT5-LeRo0QzfpwHI6aqSN6Z2qqmGWxq7-JxQfoSB8eQ",
-      "more_header_info":{
+      "more_info":{
         "Square-Version": "2022-07-20"
       },
       "search_info": {
@@ -15,10 +15,12 @@
       }
     },
     {
-      "name": "NCR Integration",
-      "baseURL": "https://connect.squareupsandbox.com/v2",
-      "access_token": "Bearer EAAAED7YnT2JC7LLGZgft8gd78R_vduHb1aF7cXZoeTZoyCvd9taB-BQEZciNZhl",
+      "name": "Clover",
+      "baseURL": "https://sandbox.dev.clover.com/v3/merchants/",
+      "access_token": "Bearer 9a8291a0-6293-2162-83e0-7584566629fd",
       "more_info":{
+        "merchantID" : "NHE04SF9P5V11"
       }
+      
     }
   ]

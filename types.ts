@@ -14,6 +14,6 @@ export type ItemType = {
 export type IntegrationDataType = {
     baseURL: string;
     access_token: string;
-    more_header_info: any;
+    more_info: any;
     search_info: any;
 };
